@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Animated Robot Logo</title>
+    <style>
+      body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  background-color: #f0f0f0;
+}
+
+.logo {
+  position: relative;
+  width: 200px;
+  height: 200px;
+}
+
+/* Engrenage */
+.gear {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200px;
+  height: 200px;
+  background-color: #fff;
+  border-radius: 50%;
+  margin: -100px;
+  box-shadow: 
+    35px 35px 0 0 #333,
+    35px -35px 0 0 #333,
+    -35px 35px 0 0 #333,
+    -35px -35px 0 0 #333,
+    50px 0 0 0 #333, 
+    -50px 0 0 0 #333,
+    0 50px 0 0 #333,
+    0 -50px 0 0 #333;
+  animation: spin 10s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Tête de robot */
+.robot-head {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100px;
+  height: 100px;
+  margin: -50px;
+  background-color: #333;
+  border-radius: 20%;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+/* État normal */
+.eyes {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+}
+
+.eye {
+  width: 20px;
+  height: 20px;
+  background-color: #fff;
+  border-radius: 50%;
+  position: relative;
+}
+
+.pupil {
+  width: 10px;
+  height: 10px;
+  background-color: #000;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: transform 0.1s ease;
+}
+
+/* État normal pour la bouche */
+.mouth {
+  width: 60px;
+  height: 10px;
+  background-color: #fff;
+  margin-top: 10px;
+  border-radius: 5px;
+}
+
+.antennae {
+  width: 4px;
+  height: 20px;
+  background-color: #333;
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  margin-left: -2px;
+}
+
+/* Hover state: Eyes bigger and mouth surprised */
+.robot-head:hover .eye {
+  width: 30px;
+  height: 30px;
+  transition: width 0.3s ease, height 0.3s ease;
+}
+
+.robot-head:hover .eye .pupil {
+  width: 15px;
+  height: 15px;
+  transition: width 0.3s ease, height 0.3s ease;
+}
+
+.robot-head:hover .mouth {
+  width: 20px;
+  height: 20px;
+  margin-top: 5px;
+  border-radius: 50%;
+  transition: width 0.3s
+  0.3s ease, height 0.3s ease, margin-top 0.3s ease;}
+    </style>
+  </head>
+  <body>
+    <div class="logo">
+      <div class="gear"></div>
+      <div class="robot-head">
+        <div class="eyes">
+          <div class="eye left"><div class="pupil" id="left-pupil"></div></div>
+          <div class="eye right"><div class="pupil"  id="right-pupil"></div></div>
+        </div>
+        <div class="mouth"></div>
+        <div class="antennae"></div>
+      </div>
+    </div>
+
+   <script>
+    document.addEventListener('mousemove', (event) => {
+    const leftPupil = document.getElementById('left-pupil');
+    const rightPupil = document.getElementById('right-pupil');
+    const eyes = [
+        { element: leftPupil, offsetX: -25, offsetY: -75 },
+        { element: rightPupil, offsetX: 25, offsetY: -75 }
+    ];
+
+    eyes.forEach(eye => {
+        const eyeRect = eye.element.parentElement.getBoundingClientRect();
+        const eyeCenterX = eyeRect.left + eyeRect.width / 2;
+        const eyeCenterY = eyeRect.top + eyeRect.height / 2;
+        const deltaX = event.clientX - eyeCenterX;
+        const deltaY = event.clientY - eyeCenterY;
+        const angle = Math.atan2(deltaY, deltaX);
+        const distance = Math.min(eyeRect.width / 4, Math.hypot(deltaX, deltaY) / 10);
+
+        const pupilLeft = Math.cos(angle) * distance - eye.element.clientWidth / 2;
+        const pupilTop = Math.sin(angle) * distance - eye.element.clientHeight / 2;
+
+        eye.element.style.transform = `translate(${pupilLeft}px, ${pupilTop}px)`;
+    });
+});
+
+   </script>
+  </body>
+</html>
